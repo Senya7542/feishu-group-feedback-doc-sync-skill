@@ -27,6 +27,7 @@ tools/install_<project>_feedback_watcher_task.ps1
 同步脚本需要：
 
 - 从配置或生成的常量读取 `CHAT_ID`、`TARGET_DOC`、`ACTIVE_PHASE_TITLE`、`PLANNER_OPEN_IDS`、`SELF_OPEN_IDS`。
+- 如用户指定某些同事的无标签反馈也应同步，增加 `COLLEAGUE_OPEN_IDS` 或等价配置，并只对明确反馈消息放行。
 - 用 `lark-im` 拉取最近群消息。
 - 处理前按消息位置或时间排序。
 - 先识别视频消息并创建版本区块。
@@ -86,6 +87,7 @@ Windows 上优先使用：
 ## 常见失败
 
 - 视频出现但反馈没有出现：分类规则太严格、策划 `open_id` 缺失，或反馈消息在视频之前。
+- 指定同事的反馈没有出现：该成员没有加入 `COLLEAGUE_OPEN_IDS`，或无标签消息被普通讨论过滤规则提前拦截。
 - 文字反馈出现但图片缺失：图片只在显式反馈路径处理；带图片的正式反馈必须走记录式同步。
 - 文档重复内容：没有记录消息 ID/hash，或编辑消息被追加而不是重新渲染。
 - 每分钟弹控制台窗口：计划任务正在可见启动 `python.exe` 或 PowerShell；改成隐藏任务和 `pythonw.exe`。
