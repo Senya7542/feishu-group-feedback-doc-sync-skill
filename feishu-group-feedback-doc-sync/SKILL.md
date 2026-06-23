@@ -67,6 +67,7 @@ https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
 ## 需要读取哪些引用文件
 
 - 新用户首次搭建前，读取 `references/setup-guide.md`。
+- 搭建真实项目、调整规则、排查误判或漏同步前，读取 `references/practical-rules.md`。
 - 创建或重排飞书文档时，读取 `references/document-template.md`。
 - 判断群消息是否应该写入文档时，读取 `references/message-semantics.md`。
 - 生成或修改本地 watcher 时，读取 `references/automation-implementation.md`。
@@ -83,6 +84,7 @@ https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
 - 新视频必须先出现在文档里，即使还没有反馈；反馈可以留空，或只在本版定位框里写“等待后续反馈沉淀”。
 - 同一个日期的小版本归在同一个日期下；最新日期在上，往期日期在下。
 - 后续新阶段进入时，新阶段放在旧阶段上方。
+- 如果用户指出某条消息不是反馈、某条反馈漏图、版本号写错或排版不符合实际使用，先把这类经验沉淀到 `references/practical-rules.md`，再调整自动化规则。
 
 ## 分享给同事安装
 
