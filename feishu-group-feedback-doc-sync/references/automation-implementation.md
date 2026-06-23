@@ -1,10 +1,10 @@
-# Automation Implementation
+# 自动化实现
 
-Use this reference when generating or modifying the local sync automation.
+生成或修改本地同步自动化时读取本文件。
 
-## Local Files
+## 本地文件结构
 
-Create project-local files similar to:
+在项目目录里创建类似结构：
 
 ```text
 tools/<project>_feedback_sync.py
@@ -20,73 +20,73 @@ tools/install_<project>_feedback_watcher_task.ps1
   tasks/
 ```
 
-Keep state and media caches in the project workspace, not in global temp folders.
+状态和媒体缓存放在项目工作区内，不要放到全局临时目录。
 
-## Sync Script Responsibilities
+## 同步脚本职责
 
-The sync script should:
+同步脚本需要：
 
-- Read `CHAT_ID`, `TARGET_DOC`, `ACTIVE_PHASE_TITLE`, `PLANNER_OPEN_IDS`, and `SELF_OPEN_IDS` from config or constants generated during setup.
-- Fetch recent group messages with `lark-im`.
-- Sort messages by position/time before processing.
-- Detect video messages first and create version sections.
-- Detect text/post feedback after videos so feedback attaches to the latest earlier version.
-- Download video/image resources from IM.
-- Upload media to the Feishu document with `lark-doc` media insertion.
-- Fetch inserted media blocks back as XML and reinsert them into the desired layout.
-- Maintain processed message IDs, version metadata, feedback records, and hashes.
-- Update a sync status callout with latest update time accurate to minute.
+- 从配置或生成的常量读取 `CHAT_ID`、`TARGET_DOC`、`ACTIVE_PHASE_TITLE`、`PLANNER_OPEN_IDS`、`SELF_OPEN_IDS`。
+- 用 `lark-im` 拉取最近群消息。
+- 处理前按消息位置或时间排序。
+- 先识别视频消息并创建版本区块。
+- 再识别文字/post 类型反馈，让反馈挂到最近的上一个视频版本。
+- 从 IM 下载视频和图片资源。
+- 用 `lark-doc` 把媒体上传到飞书文档。
+- 回读插入后的媒体块 XML，再重新放进目标排版。
+- 维护已处理消息 ID、版本元数据、反馈记录和内容 hash。
+- 更新同步状态框，最新更新时间精确到分钟。
 
-## Feedback Image Rule
+## 反馈图片规则
 
-Image feedback must go through the same record-based render path as edited feedback.
+反馈图片必须走和编辑反馈相同的“记录式渲染”路径。
 
-Required behavior:
+必需行为：
 
-1. Extract image keys from message content, usually `[Image: img_xxx]`.
-2. Download each image from IM.
-3. Upload it to the document.
-4. Store the resulting image XML/source token in the feedback record.
-5. Render all feedback images below the video in message order.
-6. On re-sync, reuse stored image XML when the image key has not changed.
+1. 从消息内容里提取图片 key，常见形式是 `[Image: img_xxx]`。
+2. 从 IM 下载每张图片。
+3. 上传到飞书文档。
+4. 把上传后的图片 XML 或 source token 存入反馈记录。
+5. 按消息顺序把所有反馈图片渲染到视频下方。
+6. 再次同步时，如果 image key 没变，复用已存的图片 XML。
 
 ## Watcher
 
-The watcher should:
+watcher 需要：
 
-- Run one sync every 30-60 seconds.
-- Use a lock file so only one watcher processes the document.
-- Write heartbeat JSON containing status, PID, chat ID, target doc, interval, and update time.
-- Log to a project-local file.
-- Never open a visible console window during normal operation.
+- 每 30-60 秒运行一次同步。
+- 用 lock 文件保证同一时间只有一个 watcher 处理文档。
+- 写 heartbeat JSON，包含状态、PID、chat ID、目标文档、轮询间隔和更新时间。
+- 日志写到项目本地文件。
+- 正常运行时不要弹出可见控制台窗口。
 
-On Windows, prefer:
+Windows 上优先使用：
 
-- `pythonw.exe` for the scheduled supervisor
+- `pythonw.exe` 启动计划任务 supervisor
 - `subprocess.CREATE_NO_WINDOW`
-- A hidden Scheduled Task with `-AtLogOn`
-- A supervisor that restarts the watcher when heartbeat is stale
+- 设置为登录后自动运行的隐藏计划任务
+- supervisor 在 watcher heartbeat 过期时自动重启 watcher
 
-Before installing a scheduled task:
+安装计划任务前：
 
-- Stop existing watcher/supervisor processes for the same project.
-- Remove stale heartbeat.
-- Run one manual sync successfully.
+- 停掉同项目旧 watcher/supervisor 进程。
+- 删除过期 heartbeat。
+- 先手动同步成功一次。
 
-## Verification
+## 验证
 
-Always verify with fresh commands:
+始终用新命令验证：
 
-- Compile the sync script, for example `python -m py_compile tools/<project>_feedback_sync.py`.
-- Run one manual sync.
-- Fetch the latest version section and confirm video, feedback headers, and images exist.
-- Run the sync again and confirm no duplicate content appears.
-- Check watcher task state and heartbeat after installation.
+- 编译同步脚本，例如 `python -m py_compile tools/<project>_feedback_sync.py`。
+- 手动运行一次同步。
+- 回读最新版本区块，确认视频、反馈标题和图片存在。
+- 再运行一次同步，确认不会重复插入。
+- 安装 watcher 后检查计划任务状态和 heartbeat。
 
-## Common Failure Modes
+## 常见失败
 
-- Video appears but feedback does not: classifier too strict, missing planner `open_id`, or feedback message came before video.
-- Text feedback appears but image is missing: image keys are only processed in explicit feedback path; route any image-bearing formal feedback through record-based sync.
-- Duplicates appear: missing message ID/hash tracking or edited messages are appended instead of re-rendered.
-- Console pops up every minute: scheduled task is launching `python.exe` or PowerShell visibly; switch to hidden task and `pythonw.exe`.
-- Old phase receives new videos: active phase anchor search is not scoped to `ACTIVE_PHASE_TITLE`.
+- 视频出现但反馈没有出现：分类规则太严格、策划 `open_id` 缺失，或反馈消息在视频之前。
+- 文字反馈出现但图片缺失：图片只在显式反馈路径处理；带图片的正式反馈必须走记录式同步。
+- 文档重复内容：没有记录消息 ID/hash，或编辑消息被追加而不是重新渲染。
+- 每分钟弹控制台窗口：计划任务正在可见启动 `python.exe` 或 PowerShell；改成隐藏任务和 `pythonw.exe`。
+- 新视频进了旧阶段：阶段锚点搜索没有限定 `ACTIVE_PHASE_TITLE`。

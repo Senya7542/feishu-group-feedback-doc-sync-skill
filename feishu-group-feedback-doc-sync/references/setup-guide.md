@@ -1,46 +1,46 @@
-# Setup Guide
+# 搭建指南
 
-Use this reference when a teammate wants their own group feedback document and watcher.
+当同事想为自己的项目群搭建反馈文档和后台同步时，先读取本文件。
 
-## Minimum Inputs
+## 最少需要的信息
 
-Collect these before writing automation:
+开始写自动化前，先收集这些信息：
 
-- `project_name`: Display name for the document title.
-- `chat`: Feishu group name, URL, or `chat_id`.
-- `target_doc`: Existing Feishu Wiki/Docx URL or permission to create a new document.
-- `phases`: At least one phase title, such as `一、蓝图功能制作验证阶段` or `二、循环1阶段`.
-- `active_phase`: The phase where newly detected videos should be inserted.
-- `planner_people`: Names or `open_id`s whose formal feedback should become `策划反馈`.
-- `self_people`: User names or `open_id`s whose edited summaries should also be accepted as `策划反馈`.
-- `video_pattern`: How to derive versions from filenames/messages, for example `MMDDvN`.
-- `poll_interval`: Default to 30-60 seconds.
+- `project_name`：文档标题里显示的项目名。
+- `chat`：飞书项目群名称、群链接或 `chat_id`。
+- `target_doc`：已有飞书 Wiki/Docx 链接；如果没有，确认是否创建新文档。
+- `phases`：至少一个阶段标题，例如 `一、蓝图功能制作验证阶段`、`二、循环 1 阶段`。
+- `active_phase`：新识别到的视频应该插入到哪个阶段。
+- `planner_people`：哪些姓名或 `open_id` 的正式反馈归入 `策划反馈`。
+- `self_people`：用户本人整理线下反馈时，哪些姓名或 `open_id` 也归入 `策划反馈`。
+- `video_pattern`：如何从文件名或消息推导版本号，例如 `MMDDvN`。
+- `poll_interval`：默认 30-60 秒。
 
-If the user cannot provide `chat_id` or `open_id`s, resolve them through `lark-im` and `lark-contact`.
+如果用户不能提供 `chat_id` 或 `open_id`，通过 `lark-im` 和 `lark-contact` 解析。
 
-## First Setup Flow
+## 首次搭建流程
 
-1. Confirm Feishu plugin availability. If missing, point the user to https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd.
-2. Resolve the project group through `lark-im +chat-search` or the available Feishu chat search command.
-3. Resolve planner/self people to `open_id`.
-4. Create or prepare the target document with the template rules.
-5. Backfill recent group history before enabling the watcher.
-6. Install the watcher only after a manual sync has succeeded.
+1. 确认 Agent 飞书授权插件可用。不可用时，引导用户先看：https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
+2. 通过 `lark-im` 搜索或解析项目群。
+3. 把策划人员和用户本人解析成 `open_id`。
+4. 按模板创建或整理目标文档。
+5. 先回填最近群聊历史，再开启 watcher。
+6. 手动同步成功后，才安装后台自动同步任务。
 
-## User-Facing Promise
+## 给用户说明时的承诺
 
-Explain the behavior in plain terms:
+用中文清楚说明这些行为：
 
-- "When you send a video in the group, a new version section appears in the doc."
-- "When formal planner feedback appears, it is added under `策划反馈`."
-- "When teammate feedback appears with explicit labels, it is added under `同事反馈`."
-- "Edited formal feedback updates the existing section instead of duplicating."
-- "Images attached to formal feedback are placed below the video."
+- “你在群里发视频后，文档里会出现一个新的版本区块。”
+- “策划本人或你整理的正式策划反馈，会写到 `策划反馈` 下。”
+- “同事明确标注的反馈，会写到 `同事反馈` 下。”
+- “编辑过的正式反馈会更新原位置，不会重复追加。”
+- “正式反馈里的图片会放在对应视频下方。”
 
-## Safe Defaults
+## 默认安全规则
 
-- Hide person names in the document.
-- Do not include source message links.
-- Keep all automation state inside a project-local hidden folder.
-- Use a non-popup background task on Windows.
-- Log every sync attempt and maintain a heartbeat file.
+- 文档里隐藏真实人名。
+- 文档里不写消息来源和消息链接。
+- 自动化状态都放在项目目录下的隐藏文件夹里。
+- Windows 上使用不弹窗的后台任务。
+- 每次同步写日志，并维护 heartbeat 文件。

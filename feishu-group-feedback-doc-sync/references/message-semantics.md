@@ -1,80 +1,83 @@
-# Message Semantics
+# 群消息语义判断
 
-Use this reference when deciding whether a group message should become document content.
+判断群消息是否应该写入反馈文档时读取本文件。
 
-## Video Messages
+## 视频消息
 
-A message is a version video when it contains a downloadable video/file resource and can produce a version name.
+一条消息满足下面条件时，视为一个版本视频：
 
-Preferred version derivation:
+- 消息里有可下载的视频或文件资源。
+- 能从文件名、消息文字或发送日期推导出版本号。
 
-1. Use explicit `MMDDvN` in filename or message text, such as `0616v2`.
-2. If absent, derive `MMDDvN` from the message date and next available version number for that date.
-3. If the user corrects version names, update state and document headings rather than creating new duplicate versions.
+版本号优先级：
 
-Insert the video immediately even when no feedback exists yet.
+1. 优先使用文件名或消息文字里的显式 `MMDDvN`，例如 `0616v2`。
+2. 没有显式版本号时，用消息日期加当天递增序号推导 `MMDDvN`。
+3. 如果用户后续修正版本号，更新状态和文档标题，不要创建重复版本。
 
-## Formal Planner Feedback
+视频识别到后要立即插入文档，即使还没有反馈。
 
-Classify as `策划反馈` when any of these is true:
+## 正式策划反馈
 
-- The message contains explicit labels: `策划反馈`, `线下反馈`, `面聊反馈`, `反馈整理`, `整理反馈`.
-- The sender is in configured planner `open_id`s and the text contains feedback intent.
-- The configured owner/self sends a labeled summary of offline planner feedback.
+满足任一条件时归入 `策划反馈`：
 
-Accept images in the same formal feedback message and place them below the video.
+- 消息包含明确标签：`策划反馈`、`线下反馈`、`面聊反馈`、`反馈整理`、`整理反馈`。
+- 发送者在配置的策划 `open_id` 列表内，并且文字明显是在给反馈。
+- 配置的用户本人发送了带标签的线下策划反馈整理。
 
-## Colleague Feedback
+同一条正式反馈消息里的图片也要接受，并放到对应视频下方。
 
-Classify as `同事反馈` when the message contains explicit labels such as:
+## 同事反馈
+
+只有消息带明确标签时才归入 `同事反馈`，例如：
 
 - `同事反馈`
 - `同事补充反馈`
-- A user-approved equivalent phrase for the team
+- 用户认可的其他等价团队短语
 
-Do not treat casual discussion from teammates as `同事反馈` unless explicitly labeled or the user has approved a narrower rule.
+普通同事讨论不要当作 `同事反馈`，除非用户明确要求收窄规则。
 
-## Discussion To Ignore
+## 应忽略的讨论
 
-Ignore these as feedback unless explicitly labeled:
+除非消息有明确反馈标签，否则忽略这些内容：
 
-- Questions about the project or implementation: `吗`, `么`, `怎么`, `是不是`, `是否`, `有没有`, `是吗`
-- Acknowledgements: `好的`, `收到`, `有的`, `可以`, `ok`, `嗯`
-- Short fragments without feedback content
-- Messages that merely clarify earlier discussion
-- Internal meeting notes that the user says belong to an older version
+- 项目问题或实现讨论：`吗`、`么`、`怎么`、`是不是`、`是否`、`有没有`、`是吗`
+- 确认和回应：`好的`、`收到`、`有的`、`可以`、`ok`、`嗯`
+- 没有反馈内容的短片段
+- 只是澄清前文的消息
+- 用户说明属于上一版或内部会旧反馈的会议记录
 
-When unsure, be conservative: leave it out and mention that the rule can be tuned.
+不确定时保守处理：先不要写入文档，并说明规则可以继续调。
 
-## Numbered Feedback
+## 编号反馈
 
-If a formal feedback message starts with numbered items, split it into separate checkbox items:
+如果正式反馈消息里已经有编号，要拆成多条复选框，不要合并成一条。
+
+原消息示例：
 
 ```text
 反馈整理：
-1. 弹出来加速的小兵动画速率不要太快
+1. 挤出来加速的小兵动画速率不要太快
 2. 地编调整，画面中道路尽量是直的
-3. 初始偏移值加大
+3. 初始的偏移值加大
 ```
 
-Render as:
+渲染为：
 
 ```xml
-<checkbox done="false">1. 弹出来加速的小兵动画速率不要太快</checkbox>
+<checkbox done="false">1. 挤出来加速的小兵动画速率不要太快</checkbox>
 <checkbox done="false">2. 地编调整，画面中道路尽量是直的</checkbox>
-<checkbox done="false">3. 初始偏移值加大</checkbox>
+<checkbox done="false">3. 初始的偏移值加大</checkbox>
 ```
 
-Do not collapse all numbered items into one checkbox.
+## 编辑后的消息
 
-## Edited Messages
+正式反馈记录用消息 ID 和内容 hash 跟踪。
 
-Track formal feedback records by message ID and content hash.
+当消息被编辑时：
 
-When a message changes:
-
-- Recompute feedback items and image keys.
-- Update the existing record.
-- Re-render the affected `策划反馈` or `同事反馈` section.
-- Re-render feedback images for the affected version.
-- Avoid appending duplicates.
+- 重新解析反馈条目和图片 key。
+- 更新已有反馈记录。
+- 重新渲染对应版本的 `策划反馈` 或 `同事反馈` 区块。
+- 重新渲染对应版本的反馈图片。
+- 避免重复追加。

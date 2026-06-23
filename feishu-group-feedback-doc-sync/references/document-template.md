@@ -1,43 +1,43 @@
-# Document Template
+# 文档模板
 
-Use this reference when creating or restructuring the Feishu feedback document.
+创建或重排飞书反馈文档时读取本文件。
 
-## Top-Level Shape
+## 顶层结构
 
-1. Document title: `<Project Name> 群聊视频反馈整理`
-2. Global reading guide callout at the top.
-3. Global sync status callout below the reading guide.
-4. Active/latest phase first.
-5. Older phases below, newest-to-oldest by phase.
+1. 文档标题：`<项目名> 群聊视频反馈整理`
+2. 顶部放全局阅读说明框。
+3. 阅读说明下方放全局同步状态框。
+4. 当前最新阶段放在最上面。
+5. 历史阶段放在下面，按新到旧排列。
 
-Recommended top blocks:
+推荐顶部块：
 
 ```xml
 <title>{project_name} 群聊视频反馈整理</title>
 <callout emoji="📌" background-color="light-blue" border-color="blue">
   <p><b>阅读方式：</b>最新阶段和最新日期在最上方；同一天的小版本归入同一日期，左侧目录可折叠旧日期。</p>
 </callout>
-<callout emoji="🕒" background-color="light-gray" border-color="gray">
+<callout emoji="⏱" background-color="light-gray" border-color="gray">
   <p><b>自动同步状态：</b>最后更新 {yyyy-MM-dd HH:mm}；同步内容：项目群视频、策划反馈、同事反馈。</p>
 </callout>
 ```
 
-## Phase Layout
+## 阶段布局
 
-Each major project stage is an `h1`.
+每个项目大阶段使用 `h1`。
 
 ```xml
-<h1>二、循环1阶段</h1>
+<h1>二、循环 1 阶段</h1>
 <callout emoji="🎯" background-color="light-purple" border-color="purple">
   <p><b>阶段目标：</b>{short_goal}</p>
 </callout>
 ```
 
-Newest phase goes above older phases. New incoming videos are inserted under the configured `active_phase`.
+最新阶段放在旧阶段上方。新视频插入到配置里的 `active_phase` 下。
 
-## Date Layout
+## 日期布局
 
-Dates are `h2` blocks with an icon. Same-day versions live under one date.
+日期使用带图标的 `h2`。同一天的小版本都放在同一个日期下。
 
 ```xml
 <h2>📅 2026-06-23</h2>
@@ -46,11 +46,11 @@ Dates are `h2` blocks with an icon. Same-day versions live under one date.
 </callout>
 ```
 
-Use at least two blank paragraphs between different dates if the document feels dense.
+如果文档显得拥挤，不同日期之间至少留两个空段落。
 
-## Version Layout
+## 小版本布局
 
-Each video version is an `h3`.
+每个视频版本使用 `h3`。
 
 ```xml
 <h3>🎞️ {version}</h3>
@@ -72,24 +72,24 @@ Each video version is an `h3`.
 </grid>
 ```
 
-Feedback headers should remain `h4` even if they appear in the document outline. They make the right column easier to scan.
+反馈标题保持 `h4`，即使它们会进入左侧目录。这样右侧栏更清晰，也方便折叠查看。
 
-## Feedback Rendering
+## 反馈渲染
 
-Render feedback as numbered checkboxes:
+反馈用编号复选框渲染：
 
 ```xml
 <checkbox done="false">1. 这里是第一条反馈</checkbox>
 <checkbox done="false">2. 这里是第二条反馈</checkbox>
 ```
 
-Do not preserve people's real names by default. Replace planner names with `策划` only when needed for readability.
+默认不要保留真实人名。需要区分来源时，只用 `策划`、`同事` 这类泛称。
 
-## Feedback Images
+## 反馈图片
 
-For images contained in formal feedback:
+正式反馈里包含图片时：
 
-- Insert images below the version video in the left column.
-- Keep video first, then feedback images in message order.
-- Re-render images from recorded image keys so edited feedback does not duplicate images.
-- Use a consistent width such as 315px for vertical video screenshots/feedback images.
+- 图片放在左侧视频下方。
+- 顺序固定为：视频在最上面，反馈图片按消息顺序排列在下面。
+- 从记录过的 image key 重新渲染图片，避免编辑反馈时重复插入。
+- 竖屏视频截图或反馈图使用一致宽度，例如 315px。

@@ -1,92 +1,100 @@
 ---
 name: feishu-group-feedback-doc-sync
-description: Create or maintain Feishu/Lark project group feedback documents that auto-organize group chat video versions, planner feedback, colleague feedback, edited feedback messages, and feedback images into a latest-first visual review doc. Use when users ask Codex or CCSwitch to reproduce the VfxForge/GOT-style Feishu group feedback workflow, build a project video/feedback archive from a Feishu group, create a reusable review document template, or set up real-time group-to-doc synchronization.
+description: Use when 用户需要让 Codex 或 CCSwitch 搭建、维护飞书项目群视频反馈整理文档，包括从群聊识别视频版本、策划反馈、同事反馈、反馈图片、编辑后的反馈消息，并按最新优先的可视化格式同步到飞书文档或设置实时后台同步。
 ---
 
-# Feishu Group Feedback Doc Sync
+# 飞书群聊反馈文档同步
 
-## Overview
+## 总览
 
-Use this skill to turn a Feishu project group into a structured feedback document: videos become version sections, formal feedback becomes numbered checkboxes, feedback images appear under the video, and the document stays updated by a local watcher.
+使用本 Skill 时，默认用中文和用户沟通、追问、解释和总结。只有命令名、字段名、API 名称、文件路径、代码标识等技术内容保留英文。
 
-This skill depends on the company's Agent Feishu authorization plugin. If the current machine has not installed it or cannot use Feishu tools, tell the user to install or authorize the plugin first and give this document: https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
+本 Skill 用来把飞书项目群整理成结构化反馈文档：群里发送的视频会变成版本区块，正式反馈会变成编号复选框，反馈图片会放在对应视频下方，文档由本地 watcher 自动更新。
 
-## Companion Skills
+本 Skill 依赖公司内部的 Agent 飞书授权插件。如果当前机器还没有安装或无法调用飞书工具，先让用户安装/授权插件，并给出这份文档：
 
-When executing this workflow, also use:
+https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
 
-- `feishu` as the route into official `lark-cli`
-- `lark-im` for group search, message search, media download, and sender/member resolution
-- `lark-doc` for Docx/Wiki creation, fetch, update, and media insertion
-- `lark-drive` when creating/importing files or changing document title/permissions
-- `lark-contact` when named people must be resolved to `open_id`
+## 配合使用的飞书能力
 
-Use user identity (`--as user`) by default because the user's own access controls determine which group messages and resources can be read.
+执行这套流程时，按需使用这些 Skill：
 
-## Workflow
+- `feishu`：飞书总入口，负责路由到官方 `lark-cli`
+- `lark-im`：搜索群、读取群消息、下载群内图片/视频、解析群成员
+- `lark-doc`：创建、读取、更新飞书 Docx/Wiki 文档，插入媒体
+- `lark-drive`：上传/导入文件、修改文档标题或权限
+- `lark-contact`：把人员姓名解析成 `open_id`
 
-1. Gather setup facts from the user or Feishu:
-   - Project/group name or `chat_id`
-   - Target Feishu document URL/token, or permission to create a new document
-   - Project name and initial phase names
-   - Who counts as planner/design feedback, usually one or more planner names or `open_id`s
-   - Whether to hide personal names in the document
-   - Video naming pattern, such as `0616v1`, `0616v2`, or filename-derived versions
-   - Desired polling interval and whether a background watcher should be installed
+默认使用用户身份 `--as user`，因为群消息和文档权限取决于用户自己的飞书权限。
 
-2. Prepare the document:
-   - If no target document exists, create one with `lark-doc`.
-   - Build an initial structure from `references/document-template.md`.
-   - Put global reading instructions and sync status above all phases.
-   - Keep newest phase and newest date near the top.
+## 工作流程
 
-3. Backfill existing history:
-   - Search/list recent group messages.
-   - Detect video/file messages and assign version IDs.
-   - Detect formal feedback and feedback images using `references/message-semantics.md`.
-   - Insert historical versions under the correct phase/date.
+1. 收集搭建信息：
+   - 项目名、项目群名称或 `chat_id`
+   - 目标飞书文档 URL/token，或是否允许创建新文档
+   - 当前阶段名称，以及历史阶段名称
+   - 哪些人属于策划/设计反馈来源，通常是策划姓名或 `open_id`
+   - 用户本人是否会整理线下反馈，以及对应姓名或 `open_id`
+   - 文档里是否隐藏真实人名
+   - 视频版本命名规则，例如 `0616v1`、`0616v2` 或从文件名推导
+   - 轮询频率，以及是否安装后台自动同步进程
 
-4. Generate local automation:
-   - Create a project-local sync script plus state directory.
-   - Use Feishu official `lark-cli` through the Agent Feishu plugin; do not call private APIs directly.
-   - Use a local state file to remember processed message IDs, version metadata, feedback records, image keys, hashes, and last document update minute.
-   - On Windows, install a hidden scheduled task that launches a supervisor with `pythonw.exe`.
-   - For non-Windows machines, use the platform's background mechanism only after confirming with the user.
+2. 准备文档：
+   - 如果没有目标文档，用 `lark-doc` 创建新文档。
+   - 按 `references/document-template.md` 建立初始结构。
+   - 全局阅读说明和同步状态放在所有阶段上方。
+   - 最新阶段、最新日期、最新小版本放在更靠前的位置。
 
-5. Verify end to end:
-   - Run one manual sync.
-   - Confirm the document contains a sync status callout, latest phase, latest date, video preview, feedback headers, and any feedback images.
-   - Run a second sync and confirm no duplicates.
-   - Check watcher heartbeat/logs if a watcher was installed.
+3. 回填历史消息：
+   - 搜索或读取最近的群聊历史。
+   - 识别视频/文件消息并分配版本号。
+   - 按 `references/message-semantics.md` 识别正式反馈、反馈图片和编辑后的反馈。
+   - 把历史版本放到正确的阶段和日期下。
 
-## What To Load
+4. 生成本地自动化：
+   - 在项目目录里创建同步脚本和状态目录。
+   - 通过公司 Agent 飞书插件调用官方 `lark-cli`，不要直接调用私有 API。
+   - 用本地状态文件记录已处理消息 ID、版本元数据、反馈记录、图片 key、内容 hash 和最后更新分钟。
+   - Windows 上安装隐藏的计划任务，用 `pythonw.exe` 启动 supervisor。
+   - 非 Windows 机器只有在用户确认后再选择对应平台的后台机制。
 
-- Read `references/setup-guide.md` before starting a new user's setup.
-- Read `references/document-template.md` when creating or restructuring the Feishu document.
-- Read `references/message-semantics.md` when classifying group messages or tuning feedback rules.
-- Read `references/automation-implementation.md` when generating or modifying the local watcher.
-- Read `references/request-template.md` when the user wants a copyable prompt for teammates.
+5. 端到端验证：
+   - 手动运行一次同步。
+   - 确认文档有同步状态框、最新阶段、最新日期、视频预览、反馈标题和反馈图片。
+   - 再运行一次同步，确认没有重复内容。
+   - 如果安装了 watcher，检查 heartbeat 和日志。
 
-## Core Rules
+## 需要读取哪些引用文件
 
-- Do not put message source links, sender names, or noisy provenance in the user-facing document unless the user explicitly asks.
-- Show planner/design feedback as `策划反馈`; show other accepted feedback as `同事反馈`.
-- Treat normal questions, acknowledgements, and discussion as discussion, not formal feedback.
-- If the user edits a previous formal feedback message, update the existing feedback record instead of appending a duplicate.
-- If a feedback message contains an image, download it from IM, upload it to the document, and render it below that version's video.
-- Keep the document visually scannable: phase heading, date heading, version heading, video on the left, status/feedback on the right, numbered checkbox feedback under `h4` headers.
-- New videos must appear even if feedback has not arrived yet; leave feedback sections empty or with a concise "waiting for feedback" note only in the version positioning callout.
+- 新用户首次搭建前，读取 `references/setup-guide.md`。
+- 创建或重排飞书文档时，读取 `references/document-template.md`。
+- 判断群消息是否应该写入文档时，读取 `references/message-semantics.md`。
+- 生成或修改本地 watcher 时，读取 `references/automation-implementation.md`。
+- 用户想给同事一段可复制需求时，读取 `references/request-template.md`。
 
-## Installation Sharing
+## 核心规则
 
-When packaging this skill for teammates, share the whole `feishu-group-feedback-doc-sync` folder. The receiving machine should place it under its Codex skills directory, usually:
+- 默认不要在正文里显示消息链接、来源信息、发送人姓名或其他噪声信息。
+- 策划/设计反馈标题写成 `策划反馈`；其他被接受的明确反馈写成 `同事反馈`。
+- 普通提问、确认、闲聊、讨论过程不要当成正式反馈。
+- 用户或策划编辑了之前的正式反馈消息时，更新原反馈记录，不要追加重复记录。
+- 正式反馈里带图片时，从 IM 下载图片，上传到文档，并渲染到对应版本视频下方。
+- 文档保持便于扫读：阶段标题、日期标题、小版本标题、左侧视频/图片、右侧定位和反馈，反馈类型使用 `h4` 标题。
+- 新视频必须先出现在文档里，即使还没有反馈；反馈可以留空，或只在本版定位框里写“等待后续反馈沉淀”。
+- 同一个日期的小版本归在同一个日期下；最新日期在上，往期日期在下。
+- 后续新阶段进入时，新阶段放在旧阶段上方。
+
+## 分享给同事安装
+
+推荐通过 CCSwitch 添加仓库安装：
 
 ```text
-C:\Users\<User>\.codex\skills\feishu-group-feedback-doc-sync
+仓库 URL: Senya7542/feishu-group-feedback-doc-sync-skill
+分支: main
 ```
 
-Then the teammate can ask:
+安装后让同事对 Codex 或 Claude Code 说：
 
 ```text
-Use $feishu-group-feedback-doc-sync to create a Feishu group feedback document for my project group.
+使用 $feishu-group-feedback-doc-sync 为我的项目群创建并维护飞书群聊视频反馈整理文档。
 ```

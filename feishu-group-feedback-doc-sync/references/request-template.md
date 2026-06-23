@@ -1,38 +1,38 @@
-# Request Template
+# 需求模板
 
-Give this to teammates after they install the skill and Feishu authorization plugin.
+同事安装 Skill 和 Agent 飞书授权插件后，可以把下面这段复制给 Codex 或 Claude Code。
 
 ```text
-Use $feishu-group-feedback-doc-sync to create a Feishu group feedback document for my project.
+使用 $feishu-group-feedback-doc-sync 为我的项目群创建并维护飞书群聊视频反馈整理文档。
 
-Feishu plugin requirement:
-If this machine has not installed the Agent Feishu authorization plugin, follow this document first:
+飞书插件要求：
+如果这台电脑还没有安装 Agent 飞书授权插件，请先按照这个文档安装和授权：
 https://centurygames.feishu.cn/docx/UvqadyC9goiE8bxjVG7c3QCNncd
 
-Project name:
+项目名称：
 <项目名>
 
-Project Feishu group:
-<群名或 chat_id>
+项目飞书群：
+<群名、群链接或 chat_id>
 
-Target document:
+目标反馈文档：
 <已有文档 URL；如果没有，请帮我创建一个新的飞书文档>
 
-Current active phase:
-<例如：一、蓝图功能制作验证阶段 / 二、循环1阶段>
+当前活跃阶段：
+<例如：一、蓝图功能制作验证阶段 / 二、循环 1 阶段>
 
-Planner/design feedback people:
-<策划姓名或 open_id；这些人的正式反馈进入「策划反馈」>
+策划/设计反馈人员：
+<策划姓名或 open_id；这些人的正式反馈进入“策划反馈”>
 
-My own feedback summary:
-<我的姓名或 open_id；我整理线下反馈时也进入「策划反馈」>
+我自己的线下反馈整理：
+<我的姓名或 open_id；我整理线下反馈时也进入“策划反馈”>
 
-Rules:
+整理规则：
 - 群里我发视频后，马上把视频同步到文档。
-- 策划反馈不一定马上出现，视频版块可以先空着。
-- 正式策划反馈来自策划本人，或我明确写了「反馈整理 / 策划反馈 / 线下反馈 / 面聊反馈」的消息。
-- 普通讨论、提问、确认、寒暄不要写进文档。
-- 同事反馈只有明确写了「同事反馈 / 同事补充反馈」才写进文档。
+- 策划反馈不一定马上出现，视频区块可以先空着。
+- 正式策划反馈来自策划本人，或我明确写了“反馈整理 / 策划反馈 / 线下反馈 / 面聊反馈”的消息。
+- 普通讨论、提问、确认、闲聊不要写进文档。
+- 同事反馈只有明确写了“同事反馈 / 同事补充反馈”才写进文档。
 - 反馈里的图片要放在对应视频下方。
 - 不要在文档里显示消息来源、人名和消息链接。
 - 文档按最新阶段、最新日期、最新版本优先展示。

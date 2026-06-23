@@ -14,21 +14,26 @@ def esc(value: object) -> str:
 
 
 def load_config(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text(encoding="utf-8"))
+    return json.loads(path.read_text(encoding="utf-8-sig"))
 
 
 def render(config: dict[str, Any]) -> str:
     project_name = config.get("project_name", "项目")
     title = config.get("title") or f"{project_name} 群聊视频反馈整理"
     updated_at = config.get("updated_at") or datetime.now().strftime("%Y-%m-%d %H:%M")
-    phases = config.get("phases") or [{"title": config.get("active_phase", "一、当前阶段"), "goal": "沉淀项目群视频版本和反馈。"}]
+    phases = config.get("phases") or [
+        {
+            "title": config.get("active_phase", "一、当前阶段"),
+            "goal": "沉淀项目群视频版本和反馈。",
+        }
+    ]
 
     parts: list[str] = [
         f"<title>{esc(title)}</title>",
         '<callout emoji="📌" background-color="light-blue" border-color="blue">',
         "<p><b>阅读方式：</b>最新阶段和最新日期在最上方；同一天的小版本归入同一日期，左侧目录可折叠旧日期。</p>",
         "</callout>",
-        '<callout emoji="🕒" background-color="light-gray" border-color="gray">',
+        '<callout emoji="⏱" background-color="light-gray" border-color="gray">',
         f"<p><b>自动同步状态：</b>最后更新 {esc(updated_at)}；同步内容：项目群视频、策划反馈、同事反馈。</p>",
         "</callout>",
     ]
@@ -50,9 +55,9 @@ def render(config: dict[str, Any]) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Render initial Feishu Docx XML for a group feedback document.")
-    parser.add_argument("--config", required=True, type=Path, help="UTF-8 JSON config file.")
-    parser.add_argument("--output", type=Path, help="Optional output XML path. Writes stdout when omitted.")
+    parser = argparse.ArgumentParser(description="生成群聊反馈文档的初始飞书 Docx XML。")
+    parser.add_argument("--config", required=True, type=Path, help="UTF-8 JSON 配置文件。")
+    parser.add_argument("--output", type=Path, help="可选输出 XML 路径；不填时输出到 stdout。")
     args = parser.parse_args()
 
     xml = render(load_config(args.config))
