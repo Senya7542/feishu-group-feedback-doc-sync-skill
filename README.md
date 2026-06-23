@@ -5,18 +5,22 @@
 ## Skill
 
 - Name: `feishu-group-feedback-doc-sync`
-- Path: `skills/feishu-group-feedback-doc-sync`
-- Main file: `skills/feishu-group-feedback-doc-sync/SKILL.md`
+- Path: `feishu-group-feedback-doc-sync`
+- Main file: `feishu-group-feedback-doc-sync/SKILL.md`
 
 ## CCSwitch 安装
 
 在 CCSwitch 的 `Skills 管理 -> 仓库管理 -> 添加仓库` 中填写：
 
 ```text
-Owner: Senya7542
-Name: feishu-group-feedback-doc-sync-skill
-Branch: main
-Subdirectory: skills
+仓库 URL: Senya7542/feishu-group-feedback-doc-sync-skill
+分支: main
+```
+
+也可以把仓库 URL 填成完整地址：
+
+```text
+https://github.com/Senya7542/feishu-group-feedback-doc-sync-skill
 ```
 
 刷新技能列表后搜索：
