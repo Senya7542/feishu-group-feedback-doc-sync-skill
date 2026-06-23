@@ -45,6 +45,6 @@ Use $feishu-group-feedback-doc-sync to create a Feishu group feedback document f
 
 Skill 会引导填写项目群、目标文档、当前阶段、策划反馈人员、版本命名规则和后台同步方式。
 
-## Privacy
+## Notes
 
-建议保持仓库为 private。Skill 中包含公司内部飞书插件入口和团队文档自动化流程，不建议直接公开发布到公共注册表。
+这个仓库可以公开给团队通过 CCSwitch 安装。文档中的飞书链接需要公司内部权限，外部访问者无法打开；真正执行同步前仍需要本机安装并授权公司 Agent 飞书插件。
